@@ -17,10 +17,7 @@ app.get('/professor', function (req, res) {
     const lname = req.query.lname;
     const university = req.query.university;
 
-    console.log("Incoming request:", fname, lname, university);
-
     professorURL(fname, lname, university, (response) => {
-        console.log("↪ professorURL callback:", response);
 
         if (!response || !response.URL) {
             console.log("No professor URL found.");
@@ -28,14 +25,12 @@ app.get('/professor', function (req, res) {
         }
 
         professorData(response.professorNode, (data) => {
-            console.log("↪ professorData callback:", data);
 
             if (!data) {
                 console.log("No professor data found.");
                 return res.status(500).json({ error: "Failed to fetch professor data." });
             }
 
-            console.log("Sending JSON response");
             res.json({
                 URL: response.URL,
                 first_name: response.fname,
