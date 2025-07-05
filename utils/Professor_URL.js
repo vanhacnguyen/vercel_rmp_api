@@ -1,75 +1,33 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
+const { searchSchool, searchProfessorsAtSchoolId } = require("ratemyprofessor-api");
 
+async function searchForProf(fname, lname, university, callback) {
+  try {
+    const fullName = `${fname} ${lname}`;
+    const schools = await searchSchool(university);
+    if (!schools.length) {
+      return callback(null);
+    }
 
-function searchForProf(fname, lname, university, callback) { 
-    fname = fname.toLowerCase().trim() // trimming for no extra characters
-    lname = lname.toLowerCase().trim()
-    university = university.toLowerCase().trim()
+    const schoolId = schools[0].node.id;
+    const profResults = await searchProfessorsAtSchoolId(fullName, schoolId);
 
-    searchURL = "https://www.ratemyprofessors.com/search.jsp?query=" + fname + "+" + lname
+    if (!profResults.length) {
+      return callback(null);
+    }
 
-    axios.get(searchURL).then(function (response) { // callback function
-        if(response.status === 200) {
-            const html = response.data 
-
-            // CSS Selector
-            const $ = cheerio.load(html)
-            var liSelector = ".listings > li";
-
-            // [LiObject, LiObject, LiObject, LiObject]
-            $(liSelector).each(function(index) {
-                var name = $(this).find(".main").html() // including null case 
-                var universityAndSubject = $(this).find(".sub").html() // including null case
-                profURL= $(this).find("a").attr("href")
-                
-
-                
-                if(universityAndSubject != null) {
-                    universityAndSubject = universityAndSubject.toLowerCase().trim();
-                    var rmpUniversity = universityAndSubject.split(",")[0];
-
-                    if(name != null) {
-                        name = name.toLowerCase().trim();
-                        var rmpFirstName = name.split(",")[1].trim()
-                        var rmpLastName = name.split(",")[0].trim()
-                    }
-
-                    
-                    if (fname ==  rmpFirstName && lname == rmpLastName) {
-        
-
-
-                        if(profURL != null) {
-                            
-                            profURL = "https://www.ratemyprofessors.com" + profURL.trim()
-                            callback({
-                                URL: profURL,
-                                fname: rmpFirstName,
-                                lname: rmpLastName,
-                                university: rmpUniversity
-                                
-                            })
-                            
-                        }
-                    } 
-                    
-                } 
-                
-
-
-
-
-            }) 
-            
-        }
-
-
-    })
-
+    const prof = profResults[0].node;
+    const decodedId = Buffer.from(prof.id, 'base64').toString('utf-8').split('-')[1];
+    callback({
+        professorNode: prof,
+        URL: `https://www.ratemyprofessors.com/professor/${decodedId}`,
+        fname: prof.firstName,
+        lname: prof.lastName,
+        university: prof.school.name
+    });
+  } catch (err) {
+    console.error("Error fetching professor data:", err);
+    callback(null);
+  }
 }
 
-
-
-
-module.exports = searchForProf
+module.exports = searchForProf;
