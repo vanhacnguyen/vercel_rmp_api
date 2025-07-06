@@ -18,16 +18,13 @@ app.get('/professor', function (req, res) {
     const university = req.query.university;
 
     professorURL(fname, lname, university, (response) => {
-
         if (!response || !response.URL) {
-            console.log("No professor URL found.");
             return res.status(404).json({ error: "Professor not found." });
         }
 
         professorData(response.professorNode, (data) => {
 
             if (!data) {
-                console.log("No professor data found.");
                 return res.status(500).json({ error: "Failed to fetch professor data." });
             }
 
