@@ -9,7 +9,7 @@ Node.js and npm
 ### Installing
 For running on your local machine or any hosting server for development and testing purpose follow the below steps.
 
-1) Clone this repo with ```git clone https://github.com/vmani273/RMP-API.git```
+1) Clone this repo with ```git clone https://github.com/vanhacnguyen/vercel_rmp_api.git```
 2) Change directory to ```RPM-API```
 3) Run ```npm install``` to install all neccesary packages
 
