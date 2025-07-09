@@ -24,6 +24,20 @@ module.exports = async (req, res) => {
             return res.status(404).json({ error: "Professor not found." });
         }
 
+        const siteFirst = normalize(fname);
+        const siteLast = normalize(lname);
+        const apiFirst = normalize(response.fname || "");
+        const apiLast = normalize(response.lname || "");
+
+        if (siteFirst !== apiFirst || siteLast !== apiLast) {
+            return res.status(404).json({
+                error: "Professor name does not match exactly.",
+                siteFirst,
+                siteLast,
+                apiFirst,
+                apiLast
+            });
+        }
         professorData(response.professorNode, (data) => {
             if (!data) {
                 return res.status(500).json({ error: "Failed to fetch professor data." });
@@ -42,3 +56,11 @@ module.exports = async (req, res) => {
         });
     });
 };
+
+function normalize(name) {
+    return name
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[^a-z]/g, '') // remove all non-letters
+        .trim();
+}
