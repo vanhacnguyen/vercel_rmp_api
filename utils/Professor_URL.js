@@ -56,12 +56,19 @@ function findExactMatch(results, fname, lname) {
   const inputFirst = normalize(fname);
   const inputLast = normalize(lname);
 
-  return results.find(result => {
+  for (let result of results) {
     const prof = result.node;
     const profFirst = normalize(prof.firstName);
     const profLast = normalize(prof.lastName);
-    return profFirst === inputFirst && profLast === inputLast;
-  })?.node || null;
+
+    // Match either: exact match or flipped
+    const isDirectMatch = profFirst === inputFirst && profLast === inputLast;
+    const isFlippedMatch = profFirst === inputLast && profLast === inputFirst;
+
+    if (isDirectMatch || isFlippedMatch) return prof;
+  }
+
+  return null;
 }
 
 module.exports = searchForProf;
