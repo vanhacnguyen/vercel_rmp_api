@@ -20,6 +20,7 @@ async function searchForProf(fname, lname, university, callback) {
 
     // if not found, try flipped name
     if (!prof) {
+      const flippedName = `${lname} ${fname}`;
       const flippedResults = await searchProfessorsAtSchoolId(flippedName, schoolId);
       prof = findExactMatch(flippedResults, lname, fname);
     }
