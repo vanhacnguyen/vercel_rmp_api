@@ -3,6 +3,7 @@ const { searchSchool, searchProfessorsAtSchoolId } = require("ratemyprofessor-ap
 async function searchForProf(fname, lname, university, callback) {
   try {
     const fullName = `${fname} ${lname}`;
+    const flippedName = `${lname} ${fname}`;
     const schools = await searchSchool(university);
     if (!schools.length) {
       return callback(null);
@@ -20,7 +21,7 @@ async function searchForProf(fname, lname, university, callback) {
 
     // if not found, try flipped name
     if (!prof) {
-      const flippedName = `${lname} ${fname}`;
+      console.log(`Trying flipped name: ${lname} ${fname}`);
       const flippedResults = await searchProfessorsAtSchoolId(flippedName, schoolId);
       prof = findExactMatch(flippedResults, lname, fname);
     }
