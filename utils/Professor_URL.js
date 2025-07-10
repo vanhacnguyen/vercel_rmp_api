@@ -15,20 +15,16 @@ async function searchForProf(fname, lname, university, callback) {
       return callback(null);
     }
 
-    // Normalize input name
-    const inputFirst = normalize(fname);
-    const inputLast = normalize(lname);
+    // first search: normal order (first, last)
+    let prof = findExactMatch(profResults, fname, lname);
 
-    // Find best match by comparing normalized names
-    const exactMatch = profResults.find(result => {
-      const prof = result.node;
-      const profFirst = normalize(prof.firstName);
-      const profLast = normalize(prof.lastName);
-      return profFirst === inputFirst && profLast === inputLast;
-    });
-
-    const prof = exactMatch ? exactMatch.node : null;
+    // if not found, try flipped name
     if (!prof) {
+      const flippedResults = await searchProfessorsAtSchoolId(flippedName, schoolId);
+      prof = findExactMatch(flippedResults, lname, fname);
+    }
+
+    if (!prof) { // if still cant find, there's none
       return callback(null);
     }
     
@@ -51,6 +47,19 @@ function normalize(name) {
         .normalize("NFD")
         .replace(/[^a-z\s]/g, '') // remove punctuation like apostrophes
         .trim();
+}
+
+// find exact match based on normalized names
+function findExactMatch(results, fname, lname) {
+  const inputFirst = normalize(fname);
+  const inputLast = normalize(lname);
+
+  return results.find(result => {
+    const prof = result.node;
+    const profFirst = normalize(prof.firstName);
+    const profLast = normalize(prof.lastName);
+    return profFirst === inputFirst && profLast === inputLast;
+  })?.node || null;
 }
 
 module.exports = searchForProf;
