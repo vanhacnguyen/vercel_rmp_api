@@ -62,6 +62,6 @@ function normalize(name) {
         .toLowerCase()
         .normalize("NFD")
         .replace(/[^a-z]/g, '') // remove all non-letters
-        .split(' ')[0]
+        .split(/\s+/)[0]
         .trim();
 }
