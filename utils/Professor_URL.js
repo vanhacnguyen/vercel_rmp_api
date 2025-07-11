@@ -66,7 +66,14 @@ function findExactMatch(results, fname, lname) {
     const isDirectMatch = profFirst === inputFirst && profLast === inputLast;
     const isFlippedMatch = profFirst === inputLast && profLast === inputFirst;
 
-    if (isDirectMatch || isFlippedMatch) return prof;
+    if (isDirectMatch || isFlippedMatch) {
+      console.log("✅ Matched professor:", {
+        inputFirst, inputLast,
+        profFirst: prof.firstName,
+        profLast: prof.lastName
+      });
+      return prof;
+    }
   }
 
   return null;
