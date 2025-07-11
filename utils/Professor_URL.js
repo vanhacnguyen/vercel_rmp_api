@@ -49,6 +49,7 @@ function normalize(name) {
         .toLowerCase()
         .normalize("NFD")
         .replace(/[^a-z\s]/g, '') // remove punctuation like apostrophes
+        .split(' ')[0] 
         .trim();
 }
 
