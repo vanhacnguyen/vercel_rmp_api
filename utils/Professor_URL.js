@@ -54,7 +54,7 @@ function normalize(name) {
 
 // find exact match based on normalized names
 function findExactMatch(results, fname, lname) {
-  const inputFirst = normalize(fname);
+  const inputFirst = normalize(fname).split(' ')[0];
   const inputLast = normalize(lname);
 
   for (let result of results) {
