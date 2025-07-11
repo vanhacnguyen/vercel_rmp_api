@@ -49,7 +49,6 @@ function normalize(name) {
         .toLowerCase()
         .normalize("NFD")
         .replace(/[^a-z\s]/g, '') // remove punctuation like apostrophes
-        .split(' ')[0] 
         .trim();
 }
 
@@ -60,7 +59,7 @@ function findExactMatch(results, fname, lname) {
 
   for (let result of results) {
     const prof = result.node;
-    const profFirst = normalize(prof.firstName);
+    const profFirst = normalize(prof.firstName).split(' ')[0];
     const profLast = normalize(prof.lastName);
 
     // Match either: exact match or flipped
