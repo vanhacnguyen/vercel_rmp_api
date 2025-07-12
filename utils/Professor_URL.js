@@ -1,5 +1,21 @@
 const { searchSchool, searchProfessorsAtSchoolId } = require("ratemyprofessor-api");
 
+const nicknameMap = {
+    "chris": "christopher",
+    "christopher": "chris",
+    "zack": "zachary",
+    "zachary": "zack",
+    "mike": "michael",
+    "michael": "mike",
+    "will": "william",
+    "ed": "edward",
+    "edward": "ed",
+    "alex": "alexander",
+    "alexander": "alex",
+    "sam": "samuel",
+    "samuel": "sam"
+};
+
 async function searchForProf(fname, lname, university, callback) {
   try {
     const fullName = `${fname} ${lname}`;
@@ -45,12 +61,20 @@ async function searchForProf(fname, lname, university, callback) {
   }
 }
 function normalize(name) {
-    return name
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[^a-z\s]/g, '') // remove punctuation like apostrophes
-        .trim();
+    const cleaned = name
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[^a-z\s]/g, '')   // remove punctuation
+      .split(/\s+/)[0]            // get first word only (skip middle name)
+      .trim();
+    // try both nickname -> full and full -> nickname
+    return nicknameMap[cleaned] || getKeyByValue(nicknameMap, cleaned) || cleaned;
 }
+
+function getKeyByValue(obj, value) {
+  return Object.keys(obj).find(key => obj[key] === value);
+}
+
 
 // find exact match based on normalized names
 function findExactMatch(results, fname, lname) {
