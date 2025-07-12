@@ -25,22 +25,25 @@ async function searchForProf(fname, lname, university, callback) {
     }
 
     const schoolId = schools[0].node.id;
-    const profResults = await searchProfessorsAtSchoolId(fullName, schoolId);
+    const variants = getNameVariants(fname);
+    let prof = null;
 
-    if (!profResults.length) {
-      return callback(null);
-    }
+    for (let variant of variants) {
+      const nameCombo = `${variant} ${lname}`;
+      console.log("🔍 Trying name variant:", nameCombo);
 
-    // first search: normal order (first, last)
-    console.log("🔍 Searching (normal):", fullName);
-    let prof = findExactMatch(profResults, fname, lname);
+      const results = await searchProfessorsAtSchoolId(nameCombo, schoolId);
+      prof = findExactMatch(results, variant, lname);
 
-    // if not found, try flipped name
-    if (!prof) {
-      const flippedFullName = `${lname} ${fname}`;
-      console.log("🔁 Searching (flipped):", flippedFullName);
-      const flippedResults = await searchProfessorsAtSchoolId(flippedFullName, schoolId);
-      prof = findExactMatch(flippedResults, lname, fname);
+      if (prof) break;
+
+      // Try flipped
+      const flipped = `${lname} ${variant}`;
+      console.log("🔁 Trying flipped variant:", flipped);
+      const flippedResults = await searchProfessorsAtSchoolId(flipped, schoolId);
+      prof = findExactMatch(flippedResults, lname, variant);
+
+      if (prof) break;
     }
 
     if (!prof) { // if still cant find, there's none
@@ -60,6 +63,18 @@ async function searchForProf(fname, lname, university, callback) {
     callback(null);
   }
 }
+
+function getNameVariants(name) {
+  const normalized = normalize(name);
+  const variants = new Set([normalized]);
+
+  if (nicknameMap[normalized]) variants.add(nicknameMap[normalized]);
+  const reverse = getKeyByValue(nicknameMap, normalized);
+  if (reverse) variants.add(reverse);
+
+  return Array.from(variants);
+}
+
 function normalize(name) {
     const cleaned = name
       .toLowerCase()
