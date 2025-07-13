@@ -102,21 +102,24 @@ function findExactMatch(results, fname, lname) {
 
     // extract variants from parentheses (Jianbo (Paul) -> ["jianbo", "paul"])
     const profFirstVariants = extractNameVariants(profFirstRaw);
+    for (let variant of profFirstVariants) {
+      const profFirst = normalize(variant);
 
-    // Match either: exact match or flipped
-    const isDirectMatch = profFirst === inputFirst && profLast === inputLast;
-    const isFlippedMatch = profFirst === inputLast && profLast === inputFirst;
+      const isDirectMatch = profFirst === inputFirst && profLast === inputLast;
+      const isFlippedMatch = profFirst === inputLast && profLast === inputFirst;
 
-    if (isDirectMatch || isFlippedMatch) {
-      console.log("✅ Matched professor:", {
-        inputFirst, inputLast,
-        profFirst: prof.firstName,
-        profLast: prof.lastName
-      });
-      return prof;
+      if (isDirectMatch || isFlippedMatch) {
+        console.log("✅ Matched professor (variant):", {
+          inputFirst,
+          inputLast,
+          profFirstRaw,
+          matchedVariant: variant,
+          profLast: prof.lastName
+        });
+        return prof;
+      }
     }
   }
-
   return null;
 }
 function extractNameVariants(name) {
