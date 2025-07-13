@@ -18,7 +18,6 @@ const nicknameMap = {
 
 async function searchForProf(fname, lname, university, callback) {
   try {
-    const fullName = `${fname} ${lname}`;
     const schools = await searchSchool(university);
     if (!schools.length) {
       return callback(null);

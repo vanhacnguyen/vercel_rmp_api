@@ -1,6 +1,7 @@
 const professorURL = require('../utils/Professor_URL');
 const professorData = require('../utils/Professor_Data');
 
+
 module.exports = async (req, res) => {
     // allow any website to access this API
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -30,8 +31,7 @@ module.exports = async (req, res) => {
         const apiLast = normalize(response.lname || "");
 
         if (siteFirst !== apiFirst || siteLast !== apiLast) {
-            return res.status(404).json({
-                error: "Professor name does not match exactly.",
+            console.warn("⚠️ Names don’t exactly match:", {
                 siteFirst,
                 siteLast,
                 apiFirst,
