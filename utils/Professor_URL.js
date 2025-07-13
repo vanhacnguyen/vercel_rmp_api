@@ -13,7 +13,9 @@ const nicknameMap = {
     "alex": "alexander",
     "alexander": "alex",
     "sam": "samuel",
-    "samuel": "sam"
+    "samuel": "sam",
+    "jeff": "jeffrey",
+    "jeffrey": "jeff"
 };
 
 async function searchForProf(fname, lname, university, callback) {
