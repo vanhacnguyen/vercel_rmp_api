@@ -123,17 +123,24 @@ function findExactMatch(results, fname, lname) {
   return null;
 }
 function extractNameVariants(name) {
-  const normalized = normalize(name);
   const variants = new Set();
 
-  // original name
-  variants.add(normalized);
+  // normalize entire first name (e.g., "L. Scott")
+  const normalizedFull = normalize(name);
+  variants.add(normalizedFull);
 
-  // check for name in parentheses
+  // split parts (e.g., "L. Scott" => ["L.", "Scott"])
+  const parts = name.split(/\s+/);
+  for (const part of parts) {
+    const cleaned = normalize(part);
+    if (cleaned) variants.add(cleaned);
+  }
+
+  // check for name in parentheses (e.g., "Jianbo (Paul)")
   const parenMatch = name.match(/\(([^)]+)\)/);
   if (parenMatch) {
-    const parenName = parenMatch[1];
-    variants.add(normalize(parenName));
+    const parenName = normalize(parenMatch[1]);
+    variants.add(parenName);
   }
 
   return Array.from(variants);
