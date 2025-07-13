@@ -97,8 +97,11 @@ function findExactMatch(results, fname, lname) {
 
   for (let result of results) {
     const prof = result.node;
-    const profFirst = normalize(prof.firstName).split(' ')[0];
+    const profFirstRaw = prof.firstName;
     const profLast = normalize(prof.lastName);
+
+    // extract variants from parentheses (Jianbo (Paul) -> ["jianbo", "paul"])
+    const profFirstVariants = extractNameVariants(profFirstRaw);
 
     // Match either: exact match or flipped
     const isDirectMatch = profFirst === inputFirst && profLast === inputLast;
@@ -116,5 +119,22 @@ function findExactMatch(results, fname, lname) {
 
   return null;
 }
+function extractNameVariants(name) {
+  const normalized = normalize(name);
+  const variants = new Set();
+
+  // original name
+  variants.add(normalized);
+
+  // check for name in parentheses
+  const parenMatch = name.match(/\(([^)]+)\)/);
+  if (parenMatch) {
+    const parenName = parenMatch[1];
+    variants.add(normalize(parenName));
+  }
+
+  return Array.from(variants);
+}
+
 
 module.exports = searchForProf;
