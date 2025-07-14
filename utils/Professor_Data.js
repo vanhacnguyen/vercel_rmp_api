@@ -4,7 +4,7 @@ function getProfData(professorNode, callback) {
   try {
     callback({
       percentage: professorNode.wouldTakeAgainPercent || "N/A",
-      difficulty: professorNode.difficulty || "N/A",
+      difficulty: professorNode.avgDifficulty || "N/A",
       quality: professorNode.avgRating || "N/A",
       mostRecentComment: professorNode.topTag || "No comments"
     });
