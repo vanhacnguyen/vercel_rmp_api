@@ -31,7 +31,6 @@ async function searchForProf(fname, lname, university, callback) {
 
     for (let variant of variants) {
       const nameCombo = `${variant} ${lname}`;
-      console.log("🔍 Trying name variant:", nameCombo);
 
       const results = await searchProfessorsAtSchoolId(nameCombo, schoolId);
       prof = findExactMatch(results, variant, lname);
@@ -40,7 +39,6 @@ async function searchForProf(fname, lname, university, callback) {
 
       // Try flipped
       const flipped = `${lname} ${variant}`;
-      console.log("🔁 Trying flipped variant:", flipped);
       const flippedResults = await searchProfessorsAtSchoolId(flipped, schoolId);
       prof = findExactMatch(flippedResults, lname, variant);
 
@@ -111,13 +109,6 @@ function findExactMatch(results, fname, lname) {
       const isFlippedMatch = profFirst === inputLast && profLast === inputFirst;
 
       if (isDirectMatch || isFlippedMatch) {
-        console.log("✅ Matched professor (variant):", {
-          inputFirst,
-          inputLast,
-          profFirstRaw,
-          matchedVariant: variant,
-          profLast: prof.lastName
-        });
         return prof;
       }
     }
