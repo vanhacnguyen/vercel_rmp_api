@@ -25,19 +25,6 @@ module.exports = async (req, res) => {
             return res.status(404).json({ error: "Professor not found." });
         }
 
-        const siteFirst = normalize(fname);
-        const siteLast = normalize(lname);
-        const apiFirst = normalize(response.fname || "");
-        const apiLast = normalize(response.lname || "");
-
-        if (siteFirst !== apiFirst || siteLast !== apiLast) {
-            console.warn("⚠️ Names don’t exactly match:", {
-                siteFirst,
-                siteLast,
-                apiFirst,
-                apiLast
-            });
-        }
         professorData(response.professorNode, (data) => {
             if (!data) {
                 return res.status(500).json({ error: "Failed to fetch professor data." });
@@ -50,7 +37,7 @@ module.exports = async (req, res) => {
                 university: response.university,
                 would_take_again: data.percentage,
                 difficulty: data.difficulty,
-                overall_quality: data.quality + "/5",
+                overall_quality: data.quality,
                 most_recent_comment: data.mostRecentComment
             });
         });
